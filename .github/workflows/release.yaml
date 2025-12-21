@@ -35,6 +35,9 @@ jobs:
         with:
           ref: ${{ github.event.release.tag_name }}
 
+      - name: Move src to openwrt-support
+        run: mv openwrt-support ../ && mv ../openwrt-support ./
+      
       - name: Create and prepare artifacts directory
         run: |
           mkdir -p ${{ github.workspace }}/output_artifacts
@@ -48,6 +51,7 @@ jobs:
             ${{ matrix.sdk }} \
             /bin/bash -c "
               set -ex
+              echo 'src-link custom /workspace/openwrt-support' >> feeds.conf.default
               ./scripts/feeds update -a
               ./scripts/feeds install xupnpd
               ./scripts/feeds install luci-app-xupnpd
