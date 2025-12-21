@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  # 手动触发时，会提供一个输入框让您填写标签
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'The git tag to build'
+        required: true
+        type: string
+
+  release:
+    types:
+      - published
+
+env:
+  RELEASE_TAG: ${{ github.event_name == 'release' && github.event.release.tag_name || github.event.inputs.tag }}
+
+jobs:
+  ipk:
+    name: Package ${{ matrix.arch }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        arch:
+          - aarch64_generic
+        sdk:
+          - immortalwrt/sdk:aarch64_generic-openwrt-21.02.1
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Create and prepare artifacts directory
+        run: |
+          mkdir -p ${{ github.workspace }}/output_artifacts
+          chmod 777 ${{ github.workspace }}/output_artifacts
+      
+      - name: Build packages and copy artifacts
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            -v ${{ github.workspace }}/output_artifacts:/output \
+            ${{ matrix.sdk }} \
+            /bin/bash -c "
+              set -ex
+              ./scripts/feeds update -a
+              ./scripts/feeds install xupnpd
+              ./scripts/feeds install luci-app-xupnpd
+              make defconfig
+              echo 'CONFIG_PACKAGE_xupnpd=m' >> .config
+              echo 'CONFIG_PACKAGE_luci-app-xupnpd=m' >> .config
+              make defconfig
+              make package/xupnpd/compile V=s
+              make package/luci-app-xupnpd/compile V=s
+              cp -Rp /home/build/immortalwrt/bin/* /output/
+            "
+            
+      - name: List build artifacts for debugging
+        run: ls -Rl output_artifacts
+
+      - name: Upload Packages as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages-${{ matrix.arch }}
+          path: output_artifacts/packages/${{ matrix.arch }}/custom/*.ipk
+          if-no-files-found: error
