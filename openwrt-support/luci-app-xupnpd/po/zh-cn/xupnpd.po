@@ -13,11 +13,8 @@ msgstr "启用"
 msgid "Broadcast for LAN Only"
 msgstr "只对 LAN 广播"
 
-msgid "IPTV M3U List"
-msgstr "IPTV M3U 列表"
+msgid "IPTV M3U Playlist"
+msgstr "IPTV M3U 播放列表"
 
 msgid "Replace 192.168.100.1 to your router IP"
 msgstr "替换192.168.0.1路由器实际IP"
-
-msgid "HTTP M3U List Download"
-msgstr "HTTP M3U 列表下载"
