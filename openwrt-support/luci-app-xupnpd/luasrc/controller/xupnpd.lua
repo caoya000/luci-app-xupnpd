@@ -5,8 +5,8 @@ function index()
         return
     end
     entry({"admin", "services", "xupnpd"}, alias("admin", "services", "xupnpd", "settings"), _("XUPnPd IPTV"), 60).dependent = true
-    entry({"admin", "services", "xupnpd", "settings"}, cbi("xupnpd"), _("XUPnPd IPTV Config"), 1).leaf=true
-    entry({"admin", "services", "xupnpd", "playlist"}, cbi("xupnpd-playlist"), _("IPTV M3U Playlist"), 2).leaf = true
+    entry({"admin", "services", "xupnpd", "settings"}, cbi("xupnpd"), _("Basic Setting"), 1).leaf=true
+    entry({"admin", "services", "xupnpd", "playlist"}, cbi("xupnpd-playlist"), _("M3U Playlist"), 2).leaf = true
     entry({"admin", "services", "xupnpd", "status"}, call("act_status")).leaf=true
 end
 

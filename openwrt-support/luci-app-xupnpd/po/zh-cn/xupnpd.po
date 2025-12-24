@@ -17,4 +17,7 @@ msgid "IPTV M3U Playlist"
 msgstr "IPTV M3U 播放列表"
 
 msgid "Replace 192.168.100.1 to your router IP"
-msgstr "替换192.168.0.1路由器实际IP"
+msgstr "替换192.168.100.1路由器实际IP"
+
+msgid "M3U Playlist"
+msgstr "M3U 播放列表"
